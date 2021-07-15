@@ -27,6 +27,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.jena.riot.RDFLanguages;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -172,6 +173,10 @@ public class UpgradeUtilDriver {
         config.setFedoraUser(cmd.getOptionValue("migration-user"));
         config.setFedoraUserAddress(cmd.getOptionValue("migration-user-address"));
 
+        if (cmd.getOptionValue('R') != null) {
+            config.setResourceInfoFile(Paths.get(cmd.getOptionValue('R')));
+        }
+
         if (config.getTargetVersion() == FedoraVersion.V_6) {
             if (config.getBaseUri() == null) {
                 printHelpAndExit("base-uri must be specified when migrating to Fedora 6", configOptions);
@@ -267,6 +272,13 @@ public class UpgradeUtilDriver {
                 .hasArg(true)
                 .desc("The address of the user OCFL versions are attributed to. Default: "
                         + Config.DEFAULT_USER_ADDRESS)
+                .required(false)
+                .build());
+
+        configOptions.addOption(Option.builder("R")
+                .longOpt("resource-info-file")
+                .hasArg(true)
+                .desc("The path the file that contains a list of resources to be processed")
                 .required(false)
                 .build());
 
